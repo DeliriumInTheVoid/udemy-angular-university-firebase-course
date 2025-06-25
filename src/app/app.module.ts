@@ -83,9 +83,16 @@ import {MatNativeDateModule} from '@angular/material/core';
     AngularFireFunctionsModule
   ],
   providers: [
-  // { provide: USE_AUTH_EMULATOR, useValue: environment.useEmulators ? ['localhost', 9099] : undefined },
-  // { provide: USE_FIRESTORE_EMULATOR, useValue: environment.useEmulators ? ['localhost', 8080] : undefined },
-  // { provide: USE_FUNCTIONS_EMULATOR, useValue: environment.useEmulators ? ['localhost', 5001] : undefined }
+    //firebase emulators:start --only firestore // start emulator only with firestore
+    //firebase emulators:export sample-courses // export data from database to file
+    //firebase emulators:start --import sample-courses //impostrs data from file for database
+
+    //firebase emulators:start --only firestore --import test-data// start emulator only with firestore and with test data
+
+    //ports are located in file firebase.json
+    { provide: USE_AUTH_EMULATOR, useValue: environment.useEmulators ? ['localhost', 9099] : undefined },
+    { provide: USE_FIRESTORE_EMULATOR, useValue: environment.useEmulators ? ['localhost', 8080] : undefined },
+    { provide: USE_FUNCTIONS_EMULATOR, useValue: environment.useEmulators ? ['localhost', 5001] : undefined }
   ],
   bootstrap: [AppComponent]
 })
