@@ -47,3 +47,4 @@ firestore-debug.log
 ui-debug.log
 /try-emulator/node_modules
 /functions/service-accounts/*.json
+/.vscode/

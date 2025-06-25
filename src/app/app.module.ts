@@ -88,6 +88,7 @@ import {MatNativeDateModule} from '@angular/material/core';
     //firebase emulators:start --import sample-courses //impostrs data from file for database
 
     //firebase emulators:start --only firestore --import test-data// start emulator only with firestore and with test data
+    //firebase emulators:start --only firestore,auth --import test-data// start emulator with firestore and auth and with test data
 
     //ports are located in file firebase.json
     { provide: USE_AUTH_EMULATOR, useValue: environment.useEmulators ? ['localhost', 9099] : undefined },

@@ -1,7 +1,8 @@
 rules_version = '2';
 
 service cloud.firestore {
-  match /databases/{database}/documents {
+
+  //match /databases/{database}/documents {
 
     // This rule allows anyone with your Firestore database reference to view, edit,
     // and delete all data in your Firestore database. It is useful for getting
@@ -12,8 +13,78 @@ service cloud.firestore {
     // Make sure to write security rules for your app before that time, or else
     // all client requests to your Firestore database will be denied until you Update
     // your rules
-    match /{document=**} {
-      allow read, write: if request.time < timestamp.date(2025, 7, 22);
+    // match /{document=**} {
+    //   allow read, write: if request.time < timestamp.date(2025, 7, 22);
+    // }
+
+    //match /{document=**} {
+    //  allow read: if true;
+    //  allow write: if false;
+    //}
+  //}
+  match /databases/{database}/documents {
+
+    function isAdmin() {
+      return isAuthenticated() && 'admin' in request.auth.token &&
+      request.auth.token.admin == true;
+    }
+
+    function isAuthenticated() {
+      return request.auth.uid != null;
+    }
+
+    function isKnownUser() {
+      return isAuthenticated() &&
+      //exists() build in special function
+      exists(/databases/$(database)/documents/users/$(request.auth.uid));
+
+      //get() read data from db
+      //get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    function isNonEmptyString(fieldName) {
+      return request.resource.data[fieldName] is string &&
+      request.resource.data[fieldName].size() > 0;
+    }
+
+    function isValidCourse() {
+      //request.resource.data - data in request, before adding to db
+      //request.data = data already id db
+
+      return request.resource.data.seqNo is number && 
+      request.resource.data.seqNo >= 0 &&
+      isNonEmptyString("url");
+    }
+
+    match /courses/{courseId} {
+      //allow write - can be split to "allow create:", "allow update:", "allow delete:"
+      //allow read - can be split to "allow get:", "allow list:"
+
+      //"allow read;"" same as "allow read: if true;"
+
+      allow read: if isKnownUser();
+
+      allow create, update: if isAdmin() && isValidCourse();
+      allow delete: if isAdmin();
+
+      match /lessons/{lessonId} {
+        allow read: if isKnownUser();
+      }
+    }
+    //if at least one security rule allows read it will be readable, the order of rules ignores 
+    //match /courses/{courseId} {
+    //  allow list: if false
+    //}
+
+    //rules for collections group queries, not documents, have to be setup additionally
+    match /{path=**}/lessons/{lessonId} {
+      //path=** variable can be read as $(path)
+      allow read: if isKnownUser();
     }
   }
+
+  //better to use nesting
+  //match /databases/{database}/documents/courses/{courseId}/lessons/{lessonId} {
+  //  allow read: if true;
+  //}
 }
