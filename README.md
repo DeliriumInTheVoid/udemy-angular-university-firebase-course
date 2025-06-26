@@ -14,6 +14,7 @@ This master branch contains the *final version of the course code*, that you can
 
 
 # Installation pre-requisites
+npm ci --legacy-peer-deps
 
 IMPORTANT: Please use Node 16 LST (Long Term Support version).
 

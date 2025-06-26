@@ -17,7 +17,11 @@ import { CoursesService } from '../services/courses.service';
 })
 export class CreateCourseComponent implements OnInit {
 
-  courseId:string;
+  courseId: string;
+
+  percentageChanges$: Observable<number>;
+
+  iconUrl: string;
 
   //<form [formGroup]="form">
   form  = this.fb.group({
@@ -32,8 +36,8 @@ export class CreateCourseComponent implements OnInit {
   constructor(private fb:FormBuilder,
     private coursesService: CoursesService,
     private afs: AngularFirestore,
-    private router: Router) {
-
+    private router: Router,
+    private storage: AngularFireStorage) {
   }
 
   ngOnInit() {
@@ -68,6 +72,32 @@ export class CreateCourseComponent implements OnInit {
       })
     )
     .subscribe();
+  }
+
+  uploadThumbnail(event) {
+    const file:File = event.target.files[0];
+    console.log(file.name);
+
+    const filePath = `courses/${this.courseId}/${file.name}`;
+
+    //firebase.storage().useEmulator()
+    const task = this.storage.upload(filePath, file, {
+      cacheControl: "max-age=2592000,public"
+    });
+
+    this.percentageChanges$ = task.percentageChanges();
+    task.snapshotChanges()
+      .pipe(
+        last(),
+        concatMap(() => this.storage.ref(filePath).getDownloadURL()),
+        tap(url => this.iconUrl = url),
+        catchError(err => {
+          console.log(err);
+          alert("Could not upload file.");
+          return throwError(err);
+        }),
+      )
+      .subscribe();
   }
 
 }
