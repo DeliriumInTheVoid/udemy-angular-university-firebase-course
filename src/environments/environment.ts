@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  useEmulators: false,
+  useEmulators: true,
   firebase: {
     apiKey: "AIzaSyAKFOTY4d_l4fb_43yHmAhjUzC26jGoaW0",
     authDomain: "udemy-firebase-in-depth-a486f.firebaseapp.com",
@@ -14,7 +14,7 @@ export const environment = {
     appId: "1:828138133707:web:ffc6f7ed974ef57b01634e"
   },
   api: {
-
+    createUser: "http://127.0.0.1:5001/udemy-firebase-in-depth-a486f/us-central1/createUser",
   }
 };
 
